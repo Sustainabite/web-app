@@ -34,7 +34,7 @@ export default function Page() {
     /**
      * @description Handles the validation and sign-up process when the Sign Up button is clicked.
      */
-    async function SignUpButtonHandler(type: RegisterType){
+    async function LoginButtonHandler(type: RegisterType){
         
         //Google Sign up
         if(type === "Google"){
@@ -71,30 +71,24 @@ export default function Page() {
         <Container
             sx={{
                 display: 'flex',
-                width: {sm: "100%", md: "80%"},
-                height: {sm: "100%", md: "80%"},
-                gap: { xs: 4, sm: 8 },
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                
                 py: { xs: 8, sm: 10 },
-                textAlign: { sm: 'center', md: 'left' },
+                textAlign: 'center',
             }}
-            id="SignUp"
+            id="Login"
         >       
-            <Grid container >
-                {/* Additional Info */}
-                <Grid item xs={12} sm={6} md={6} sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', backgroundColor: 'orange' }}>
-                    <h6>Good point 1</h6>
-                    <h6>Good point 2</h6>
-                    <h6>Good point 3</h6>
-                </Grid>
-
+             <Grid container justifyContent="center" alignItems="center">
                 {/* Register Form */}
-                <Grid item xs={12} sm={6} md={6} sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column',  px: 4}}>
-                    <AuthCard title='Create free account'>
+                <Grid item xs={12} sm={12} md={7} sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column',  px: 4}}>
+                    <AuthCard title='Welcome back'>
                         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-                            <GoogleAuthButton text='Sign up with Google' onClick={() => SignUpButtonHandler("Google")} />
+                            <GoogleAuthButton text='Sign in with Google' onClick={() => LoginButtonHandler("Google")} />
                         </Box>
                         
-                        <TextBetweenLine text='Or sign up with email' />
+                        <TextBetweenLine text='Or login with email' />
 
                         <Grid container spacing={2}>
                             {/* Contact form */}
@@ -121,33 +115,11 @@ export default function Page() {
                                         helperText={passwordErrors.join(', ')}
                                         InputProps={{style: classes.text_input}}
                                     />
-                                    {/* <FilledInput
-
-                                    size="medium"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    error={passwordErrors.length > 0}
-                                    helperText={passwordErrors.join(', ')}
-                                    InputProps={{style: classes.text_input}}
-                                    id="filled-adornment-password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            //onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                            >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    /> */}
-                                    <Button variant="contained" color="primary" onClick={() => SignUpButtonHandler("Basic")}>
-                                        Sign Up
+                                    
+                                    <Button variant="contained" color="primary" onClick={() => LoginButtonHandler("Basic")}>
+                                        Login
                                     </Button>
-                                    <h6>By signing up, you agree to our Terms and conditions.</h6>
+                                     
                                 </Box>
                             </Grid>
                         </Grid>
