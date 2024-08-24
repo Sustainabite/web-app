@@ -1,13 +1,17 @@
 'use client'
+
 import { Button, Container, Grid, TextField, Box, FilledInput, InputAdornment, IconButton } from '@mui/material';
 import { useState } from 'react';
 import GoogleAuthButton from '@/app/ui/buttons/google-button';
 import TextBetweenLine from '@/app/ui/text/text-between-line';
-import { supabase } from '@/utils/supabase';
+import { supabase_client } from '@/utils/supabase/client';
 import AuthCard from '@/app/ui/auth/auth-card';
 import { cleanAndValidateInput, isValidEmail, minLength, notEmpty } from '@/utils/functions/clean-input';
+ 
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useRouter } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 const classes =  {
     text_input: {
@@ -18,16 +22,23 @@ const classes =  {
 
 type RegisterType = "Google" | "Basic"
 
+/**
+ * @description Register Page 
+ * @author Matt
+ */
 export default function Page() {
+
+    const router = useRouter();
+
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
-    
     const [loading, setLoading] = useState<boolean>(false);
 
     const [emailErrors, setEmailErrors] = useState<string[]>([]);
     const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     
@@ -38,7 +49,7 @@ export default function Page() {
         
         //Google Sign up
         if(type === "Google"){
-            await supabase.auth.signInWithOAuth({
+            await supabase_client.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
                     redirectTo: "http://localhost:3000/dashboard"
@@ -58,9 +69,16 @@ export default function Page() {
         if (type === "Basic") {
             if(emailValidation.isValid && passwordValidation.isValid){
                  
-                await supabase.auth.signUp({email: email, password: password, options: {}})
+                const {error} = await supabase_client.auth.signUp({email: email, password: password, options: {}})
+                
+                // if(error){
+                //     redirect('/error')
+                // }
 
+                //Revalidate paths that might change with sign in user
+                //revalidatePath('/', 'layout')
                 //Add move to dashboard
+                //redirect('/dashboard')
             }
         } else {
             console.log("Validation failed");
@@ -112,42 +130,48 @@ export default function Page() {
                                     />
                                     <TextField
                                         placeholder="Password"
-                                        type="password"
+                                        type={showPassword ? 'text' : 'password'}
                                         variant="outlined"
                                         size="medium"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         error={passwordErrors.length > 0}
                                         helperText={passwordErrors.join(', ')}
-                                        InputProps={{style: classes.text_input}}
+                                        InputProps={{
+                                            style: classes.text_input,
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        edge="end"
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
                                     />
-                                    {/* <FilledInput
-
-                                    size="medium"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    error={passwordErrors.length > 0}
-                                    helperText={passwordErrors.join(', ')}
-                                    InputProps={{style: classes.text_input}}
-                                    id="filled-adornment-password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            //onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                            >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    /> */}
+                                     
                                     <Button variant="contained" color="primary" onClick={() => SignUpButtonHandler("Basic")}>
                                         Sign Up
                                     </Button>
                                     <h6>By signing up, you agree to our Terms and conditions.</h6>
+                                    
+                                   
+                                    <h6>
+                                        Already have an account? 
+                                        <Button 
+                                            variant="text" 
+                                            color="primary" 
+                                            onClick={() => router.push('/login')}
+                                            sx={{textTransform: 'none'}} // Optional: To keep the button text case as-is
+                                        >
+                                            Login 
+                                        </Button>
+                                        instead
+                                    </h6>
+                                    
                                 </Box>
                             </Grid>
                         </Grid>

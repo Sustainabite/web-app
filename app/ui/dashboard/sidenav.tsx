@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AcmeLogo from '@/app/ui/acme-logo';
@@ -6,12 +8,24 @@ import { Typography } from '@mui/material';
 import { poppins } from '../styles/fonts/fonts';
 import Image from 'next/image';
 import logo from '../../../public/sus_logo.png'
+import { supabase_client } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 /**
  * @description 
  * @returns 
  */
 export default function SideNav() {
+	const router = useRouter()
+	
+	async function Logout(){
+		const { error } = await supabase_client.auth.signOut()
+		 
+		if(!error){
+			router.replace('/login')
+		}
+	}
+
     return (
 		<div className="flex h-full flex-col px-3 py-4 md:px-2 bg-green-800" >
 			{/*Logo*/}
@@ -35,8 +49,8 @@ export default function SideNav() {
 			<div className="hidden h-auto w-full grow rounded-md bg-transparent md:block"></div>
 			
 			{/*Sign Out*/}
-			<form>
-				<button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+			<form onSubmit={(e) => e.preventDefault()}>
+				<button onClick={Logout} className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
 				<PowerIcon className="w-6" />
 				<div className="hidden md:block">Sign Out</div>
 				</button>

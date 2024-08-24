@@ -2,7 +2,7 @@
 create function app.handle_new_user()
 returns trigger
 language plpgsql
-security definer set search_path = public
+security definer set search_path = app
 as $$
 begin
   insert into app.account (account_id, account_number, account_status)
